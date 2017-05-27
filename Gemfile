@@ -55,5 +55,4 @@ group :production do
   #postgres for prod
   gem 'pg'
   gem 'rails_12factor'
-  gem 'nekogiri'
 end
