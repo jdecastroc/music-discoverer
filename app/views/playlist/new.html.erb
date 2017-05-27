@@ -1,0 +1,41 @@
+<h1>RedditMusic Playlist form</h1>
+
+<%= form_tag(playlist_new_path, method: "post") do %>
+    <% @genres.each { |genre| %>
+        <h2><%= genre.name %></h2>
+        <ul>
+        <% genre.subgenres.each { |subgenre| %>
+            <%= check_box_tag "items[]", "#{subgenre.name[3..-1]}", false, {:class =>
+                "check_class"} -%>
+            <%= label_tag(subgenre.name[3..-1].downcase) -%>
+            <br>
+        <% } %>
+        </ul>
+    <% } %>
+    <%= submit_tag("send") %>
+<% end %>
+
+<script type="text/javascript">
+$(document).on('ready page:load', function () {
+;
+    var checkboxes = document.querySelectorAll('input[type=checkbox]');
+    
+    // add a change event listener for each checkbox
+    for(var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].addEventListener('change', function(){
+            checkInput();
+        });
+    }
+    
+    //Block the checkboxes after 4
+    function checkInput(){
+        var numberOfChecked = $('input[name="items[]"]:checked').length;
+        
+    	if (numberOfChecked >= 4) {
+    	    $('input[type=checkbox]:not(:checked)').attr('disabled', 'disabled');
+        } else {
+            $('input[type=checkbox]').removeAttr("disabled")
+        }
+    }
+});
+</script>

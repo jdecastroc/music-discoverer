@@ -1,0 +1,27 @@
+<html lang="en">
+<head>
+
+  <title>Reddit Music Player</title>
+  <meta name="title" content="Reddit Music Player">
+  <meta name="description" content="Make playlists of your favorite music from Reddit.">
+  <meta name="keyword" content="reddit, music player, redditor, reddit music, music, mind state music">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+  
+<%= render 'layouts/navigation' %>
+
+<div class="container">
+  <%= yield %>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,133 @@
+<div class="row">
+  <div class="col-md-8" id="player_container">
+    <div class="well">
+      <div class="text-center">
+        <h2><%= params[:items].each { |item| puts "#{item}, "} %></h2><hr class="hr-tags"/>
+        <div class="player-wrapper" style="margin-top: 20px;">
+        </div>
+        <button id="previous" type="button" class="btn btn-primary" style="position:relative; margin-top: 20px;"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span>Previous video</button>
+        <button id="next" type="button" class="btn btn-primary" style="position:relative; margin-top: 20px;"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span>Next video</button>
+      </div>
+    </div>
+  </div>
+<!--<h3>URL: <h3><?php echo $json_url;?>;-->
+  <div class="col-md-4">
+    <div class="well">
+      <h2>Playlist</h2><hr class="hr-tags"/>
+      <ul class="media-list main-list" id="links_container">
+      <% @playlist.songs_list.each { |song| %>
+        <li class="media">
+				  <a class="pull-left" href="#">
+					  <img class="media-object" src="http://img.youtube.com/vi/<%= song.url %>/default.jpg" alt="...">
+					</a>
+					<div class="media-body">
+					  <h4 class="media-heading"><a href="#" onclick = "playThisVideo('<?php echo $data[$counter]?>')"><%= song.name %></a></h4>
+					</div>
+				</li>
+      <% } %>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(document).on('ready page:load', function () {
+  
+  // Initialization of the song list iterator and the json list with the songs
+  var song_counter = 0
+  var song_list = <%= @playlist.songs_list.to_json.html_safe %>;
+  
+  // Addition of the event listeners for the player buttons
+  document.getElementById('previous').addEventListener('click', previousVideo, true);
+  document.getElementById('next').addEventListener('click', nextVideo, true);
+  
+  document.getElementById("previous").style.display = "none";
+
+  
+  // 2. This code loads the IFrame Player API code asynchronously.
+  var tag = document.createElement('script');
+
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      
+  player_wrapper = $('.player-wrapper');
+  player_wrapper.append('<div id="ytPlayer"><p>Loading player...</p></div>');
+  // 3. This function creates an <iframe> (and YouTube player)
+  //    after the API code downloads.
+  var player;
+      
+  //onYouTubeIframeAPIReady();
+  window.onYouTubeIframeAPIReady = function() {
+  player = new YT.Player('ytPlayer', {
+          height: '360',
+          width: '640',
+          videoId: song_list[song_counter].url,
+          events: {
+            'onReady': onPlayerReady,
+						'onStateChange': onPlayerStateChange,
+						'onError': onPlayerError
+          }
+        });
+  }
+
+  // 4. The API will call this function when the video player is ready.
+  function onPlayerReady(event) {
+    showPlayerOptions();
+    event.target.playVideo();
+  }
+
+  // 5. The API calls this function when the player's state changes.
+  //    The function indicates that when playing a video (state=1),
+  //    the player should play for six seconds and then stop.
+  var done = false;
+  function onPlayerStateChange(event) {
+    if (event.data == 0) { //CUANDO TERMINA PASA AL SIGUIENTE EN EL ARRAY
+			song_counter++;
+			showPlayerOptions();
+			player.loadVideoById(song_list[song_counter].url);
+		}
+  }
+  
+  function stopVideo() {
+    player.stopVideo();
+  }
+      
+  function onPlayerError(event) {
+		song_counter++;
+		showPlayerOptions();
+		player.loadVideoById(song_list[song_counter].url);
+	}
+      
+  function nextVideo() {
+	  song_counter++;
+		showPlayerOptions();
+		player.loadVideoById(song_list[song_counter].url);
+	}
+			
+	function previousVideo() {
+		song_counter--;
+		showPlayerOptions();
+		player.loadVideoById(song_list[song_counter].url);
+	}
+
+	function showPlayerOptions() {
+		if (song_counter <= 0) {
+		  document.getElementById("previous").style.display = "none";
+		} 
+		    
+		if (song_counter > 0) {
+      document.getElementById("previous").style.display = "inline";
+    }
+        
+		if (song_counter < song_list.length) {
+      document.getElementById("next").style.display = "inline";
+    }
+        
+    if (song_counter >= song_list.length) {
+      document.getElementById("next").style.display = "none";
+    }
+  }
+});
+</script>
+
