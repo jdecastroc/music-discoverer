@@ -2,13 +2,14 @@
 # Main controller class for the project
 # 
 # author: jdecastroc
-# version: 24/01/2016/A
-# see <a href = "https://github.com/jdecastroc/Reddit-music-surfer" /> Github
+# version: 2017/05/27/A
+# see <a href = "https://github.com/jdecastroc/music-discoverer" /> Github
 #      repository </a>
 # TODO:
-# => ADD STATE TO THE REQUEST (SUCCES, FAILED AND CODES)
+# => ADD STATE TO THE REQUEST (SUCCES, FAIL AND CODES)
 # => ADD LOGGER FOR ROR
 # => CHECK THE FLASH NOTICES
+# => ADD TRY/CATCH BLOCKS IN THE PARSING WITH NOKOGIRI
 #
 
 require 'nokogiri'
@@ -40,26 +41,20 @@ class PlaylistController < ApplicationController
         @playlist = Playlist.new("",params[:items],1,2) #name, resources, mode (only random for now), deep
        
     end
-    
-    # Load the scrapped playlist in the player page and play it
-    #
-    def show
-        
-    end
-    
-    
+
     private
     
     # Get the genres from GENRES_URL in order to build the form
     #
     def get_genres
 
-	    doc = Nokogiri::HTML(open(GENRES_URL, 'User-Agent' => 'web:com.ReddMusic.surfReddit:v1.4 ALPHA by /u/hoppy93'))
+	    doc = Nokogiri::HTML(open(GENRES_URL, 
+	   'User-Agent' => 'web:com.ReddMusic.surfReddit:v1.4 ALPHA by /u/hoppy93'))
 	    
 	    doc.css("div.md").css('h2, a').each { |node|
 	    
-	        current_genre = "" # Current object where storing data
-	        parsing_genre = "" # New parsed tag
+	        current_genre ||= "" # Current object where storing data
+	        parsing_genre ||= "" # New parsed tag
 	        genres_counter = -1 # Used for store subgenres in the array
 	        
 	        if node.name == 'h2'
@@ -77,7 +72,9 @@ class PlaylistController < ApplicationController
 	        if node.name == 'a' && !@genres[genres_counter].nil?
 	            if parsing_genre == current_genre
 	                #puts "It is #{node.attr('href')}" # debug purpose
-	                @genres[genres_counter].subgenres.push(Subgenre.new(node.text.strip,node.attr('href')))
+	                @genres[genres_counter]
+	                .subgenres
+	                .push(Subgenre.new(node.text.strip,node.attr('href')))
 	            end
 	            
 	        end
