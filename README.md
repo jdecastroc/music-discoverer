@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/jdecastroc/music-discoverer.svg?branch=master)](https://travis-ci.org/jdecastroc/music-discoverer)
 # Introduction and purpose
 
 This is the repository for one of my first RoR applications made in order to
@@ -8,4 +9,5 @@ the different options of the framework.
 
 # Diagram
 
-![alt text](images/music_discoverer_class_diagram_v1.JPG "Class diagram v1")
+![alt text](/images/music_discoverer_class_diagram_v1.jpg "Class diagram v1")
+
